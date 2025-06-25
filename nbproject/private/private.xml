@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dto/SystemConfig.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/ViewBook.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/ShowBorrowRecord.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/EditBookController.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/Homepage.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/ShowSystemConfig.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/AdminDashboard.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/RequestChoiceController.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/LoginController.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/BookDetail.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/UserDAO.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dto/BookRequest.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/SystemConfigDAO.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/SystemConfig.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/UserDashboard.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/BookRequestDAO.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/ShowRequestInfo.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/WEB-INF/web.xml</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/FineDAO.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dto/User.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/index.html</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dto/BorrowRecord.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/AdminDashboard.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/UserDashboard.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/Controller/MainController.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/BorrowRecordDAO.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dto/Fine.java</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/ShowRequest.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/web/Login.jsp</file>
+            <file>file:/C:/prj301_project/Webapp_prj3012/src/java/dao/BookDAO.java</file>
+        </group>
+    </open-files>
+</project-private>
