@@ -74,7 +74,7 @@ public class BookController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("SEARCH_KEYWORD", keyword);
 
-            request.getRequestDispatcher("ViewSearchBook.jsp").forward(request, response);
+            request.getRequestDispatcher("ViewBook.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error while updating config.");
