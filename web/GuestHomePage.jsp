@@ -1,30 +1,31 @@
 <%-- 
-    Document   : Homepage
-    Created on : Jun 11, 2025, 4:48:17 PM
-    Author     : Admin
+    Document   : index
+    Created on : Jun 3, 2025, 9:00:47 PM
+    Author     : DELL
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import = "java.util.ArrayList"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
-        <link rel="stylesheet" href="css/GuestHomePage.css">
-        <style></style>
+        <link rel="stylesheet" href="css/guestHomePage.css">
+        <script src="js/guestHomePage.js"></script>
+
+
     </head>
     <body>
         <section id="header">
             <div class="logo">
-                <a href="UserDashboard.jsp"><img src="#" alt="mini-logo"></a>
+                <a href="MainController?action=home"><img src="#" alt="mini-logo"></a>
             </div>
 
             <div class="navbar">
                 <nav>
                     <ul>
-                        <li><a href="UserDashboard.jsp">Home</a></li>
-                        <li><a href="#">Book Brows</a></li>
+                        <li><a href="MainController?action=home">Home</a></li>
                         <li><a href="#">Library Info</a></li>
                         <li><a href="#">Contact Us</a></li>
                         <li><a href="viewcart.jsp">view cart</a></li>
@@ -48,10 +49,13 @@
                     picked up in person.
                 </p>
 
-                <form action="SearchBookController">
-                    <input type="text" name="txtsearch" value="<%= (request.getParameter("txtsearch")!=null)?request.getParameter("txtsearch"):"" %>"/>
+                <form action="BookController" method="post">
+                    <input type="hidden" name="action" value="search" />
+                    <input type="text" name="txtsearch" value="${param.txtsearch != null ? param.txtsearch : ''}"/>
                     <input type="submit" value="find"/>
                 </form>
+
+
             </div>
             <div class="sec1-right pic" ></div>
         </section>
@@ -64,35 +68,52 @@
                     Discover the books that our community loves the most.
                 </p>
 
-                <div class="carousel-container"> <!-- Đổi tên class cho đúng -->
+                <div class="carousel-container"> 
                     <button class="prev">&#10094;</button>
 
                     <div class="carousel-track">
-                        <%
-                       // ArrayList<Book> list = null;//(ArrayList<Book>) request.getAttribute("LIST_NEW");
-                       // if (list != null && !list.isEmpty()) {
-                       //     for (Book book : list) {
-                        %>
-                        
-                        <%
-                        //        }
-                         //   } else {
-                        %>
-                        <p>No new books available.</p>
-                        <%
-                       //     }
-                        %>
+                        <c:choose>
+                            <c:when test="${not empty LIST_NEW}">
+                                <c:forEach var="book" items="${LIST_NEW}">
+                                    <div class="book-card"> 
+                                        <form action='BookController' method='get'> 
+                                            <input type='hidden' name='action' value='borrow' />
+                                            <input type='hidden' name='txtid' value='${book.id}' />
+                                            <input type='hidden' name='txtsearch' value='${sessionScope.SEARCH_KEYWORD}' />
 
+                                            <img src='${book.url}' alt="Book Cover" />
+                                            <p><strong>Title:</strong> ${book.title}</p>
+                                            <p><strong>Author:</strong> ${book.author}</p>
+                                            <p><strong>Category:</strong> ${book.category}</p>
+                                            <p><strong>Available:</strong> ${book.available_copies}</p>
+
+                                            <c:choose>
+                                                <c:when test="${book.available_copies > 0}">
+                                                    <input type="submit" value="Request Borrow" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <b>Don't have any new book</b><br/>
+                                                    <a href="index.jsp">Back to Home</a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </form>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <p>No new books available.</p>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
                     <button class="next">&#10095;</button>
-
                     <div class="dots">
                         <span class="dot active"></span>
                         <span class="dot"></span>
                         <span class="dot"></span>
                     </div>
                 </div>
+
             </div>
 
         </section>

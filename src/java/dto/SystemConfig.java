@@ -11,10 +11,10 @@ package dto;
 public class SystemConfig {
     private int id;
     private String config_key;
-    private String config_value;
+    private double config_value;
     private String description;
 
-    public SystemConfig(int id, String config_key, String config_value, String description) {
+    public SystemConfig(int id, String config_key, double config_value, String description) {
         this.id = id;
         this.config_key = config_key;
         this.config_value = config_value;
@@ -29,7 +29,7 @@ public class SystemConfig {
         return config_key;
     }
 
-    public String getConfig_value() {
+    public double getConfig_value() {
         return config_value;
     }
 
@@ -45,7 +45,7 @@ public class SystemConfig {
         this.config_key = config_key;
     }
 
-    public void setConfig_value(String config_value) {
+    public void setConfig_value(double config_value) {
         this.config_value = config_value;
     }
 

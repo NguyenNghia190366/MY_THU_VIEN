@@ -1,50 +1,53 @@
-<%-- 
-    Document   : AdminDashboard.jsp
-    Created on : Jun 13, 2025, 11:04:16 PM
-    Author     : Admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="dto.User"%>
+<%
+    User u = (User) session.getAttribute("user");
+    if (u == null || !"admin".equalsIgnoreCase(u.getRole())) {
+        session.setAttribute("redirectBackTo", "AdminDashboard.jsp");
+        response.sendRedirect("Login.jsp");
+        return;
+    }
+
+    if (request.getAttribute("CONFIG_LIST") == null) {
+        response.sendRedirect("ConfigController?action=show");
+        return;
+    }
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <style>
-            body{
-                display: flex;
-                margin: 0px;
-            }
-            .menu{
-                padding-top: 20px;
-                display: grid;
-                width: 17%;
-                background-color: #006666;
-                padding-left: 20px;
-            }
-            .mainContent{
-                
-                padding-left: 20px;
-                padding-top: 20px;
-                width: 83%;
-                background-color: #9cdbc4;
-            }
-            .mainContent a{
-                color: white;
-            }
-            .menu a{
-                color: white;
-            }
-            
-        </style>
+        <meta charset="UTF-8">
+        <title>Admin Dashboard</title>
     </head>
     <body>
-        <div class = "menu">
-            <a href="SystemConfig.jsp">System config</a>
-            <a href="ViewBook.jsp">View Books</a>
-            <a href="ShowRequest.jsp">View Requests</a>
-            <a href="ShowBorrowRecord.jsp">View Borrow Records</a>
-        </div>
-        <div class = "mainContent">bbbbbbbbbb</div>
+        <h4>Welcome ${sessionScope.user.name} comeback</h4>
+        <p><a href="LogoutController">Logout</a></p>
+        <p><a href="ViewProfile.jsp">Change Profile</a></p>
+
+        <h3>System Configuration</h3>
+        <form action="ConfigController" method="post">
+            <table border="1" cellpadding="5">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                    <th>Update</th>
+                </tr>
+                <c:forEach var="cfg" items="${CONFIG_LIST}">
+                    <tr>
+                        <td>${cfg.config_key}</td>
+                        <td><input type="text" name="value_${cfg.config_key}" value="${cfg.config_value}" /></td>
+                        <td>${cfg.description}</td>
+                        <td><button type="submit" name="action" value="update_stock${cfg.config_key}">Save</button></td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </form>
+
+        <c:if test="${not empty msg}">
+            <p style="color:red;">${msg}</p>
+        </c:if>
     </body>
 </html>

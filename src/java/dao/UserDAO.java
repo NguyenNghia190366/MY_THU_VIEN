@@ -16,35 +16,33 @@ import mylib.DBUtils;
  */
 public class UserDAO {
 
-    public User checkUser(String email, String password) {
+    public User checkUserExist(String email, String password) {
         User user = null;
         Connection cn = null;
         try {
             cn = DBUtils.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id]\n"
-                        + "      ,[name]\n"
-                        + "      ,[email]\n"
-                        + "      ,[password]\n"
-                        + "      ,[role]\n"
-                        + "      ,[status]\n"
-                        + "  FROM [library_system].[dbo].[users] WHERE [email]=? AND [password]=?;";
-                PreparedStatement st = cn.prepareStatement(sql);
-                st.setString(1, email);
-                st.setString(2, password);
-                ResultSet table = st.executeQuery();
-                if (table != null && table.next()) {
-                    int id = table.getInt("id");
-                    String name = table.getString("name");
-                    String role = table.getString("role");
-                    String status = table.getString("status");
-                    user = new User(id, name, email, password, role, status);
+                String sql = "  SELECT [id], [name], [email], [password], [role], [status]\n"
+                        + "  FROM [dbo].[users]\n"
+                        + "  WHERE [email] = ? AND [password] = ? COLLATE Latin1_General_CS_AS";
+                PreparedStatement pst = cn.prepareStatement(sql);
+                pst.setString(1, email);
+                pst.setString(2, password);
+                ResultSet rs = pst.executeQuery();
+                if (rs != null && rs.next()) {
+                    int id = rs.getInt("id");
+                    String e = rs.getString("email");
+                    String name = rs.getString("name");
+                    String role = rs.getString("role");
+                    String status = rs.getString("status");
+
+                    user = new User(id, name, e, password, role, status);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return user;
+        return user; // null nếu không tồn tại
     }
 
     public User checkUserByID(int id) {
