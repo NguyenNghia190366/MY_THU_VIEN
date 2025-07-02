@@ -1,76 +1,55 @@
-<%-- 
-    Document   : ViewBook
-    Created on : Jun 14, 2025, 10:47:47 PM
-    Author     : Admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="dto.Book"%>
-<%@page import="dao.BookDAO"%>
-<%@page import="java.util.ArrayList"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <style>
-            .booklist{
-                display: flex;
-                justify-content: center;
-            }
-            .book{
-                margin: 10px 10px;
-                width: 18%;
-            }
-            .book form{
-                width: 100%;
-                height: 100%;
-            }
-            button{
-                
-                width: 100%;
-                height: 100%;
-            }
-        </style>
+        <title>Search Result</title>
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <div class = "booklist">
-            
-            
-        <%
-            BookDAO d = new BookDAO();
-            ArrayList<Book> list = d.viewBookList();
-            for(int i = 0;i<list.size();i++){       
-        %>
-        <div class = "book">
-        <form action="BookDetail.jsp" method = "post">    
-        <button name="book<%=list.get(i).getId()%>" value="<%=list.get(i).getId()%>" type="submit">
-            <div>ID: <%=list.get(i).getId()%></div>
-            <div><%=list.get(i).getTitle()%></div>
-            <div><%=list.get(i).getAuthor()%></div>
-            <div><%=list.get(i).getIsbn()%></div>
-            <div><%=list.get(i).getCategory()%></div>
-            <div><%=list.get(i).getPublished_year()%></div>
-            <div>Total copies: <%=list.get(i).getTotal_copies()%></div>
-            <div>Available copies: <%=list.get(i).getAvailable_copies()%></div>
-            <%if(list.get(i).getStatus().equals("active")){%>
-            <div style="color:greenyellow"><%=list.get(i).getStatus()%></div>
-                     <%
-            } else {
-            %>
-            <div style="color:red"><%=list.get(i).getStatus()%></div>
-            </button>
-            </form>
-             
-         <%
-            }
-            %>
-            
-       </div>
-        
-                    <%
-            }
-            %>
-    </div>
-        </body>
+        <div class="nav-bar">
+            <a href="GuestHomePage.jsp">Home</a> | <a href="viewcart.jsp">View Cart</a>
+        </div>
+
+        <h1>Search Results</h1>
+
+        <form class="search-form" action="BookController" method="get">
+            <input type="hidden" name="action" value="search" />
+            <input type="text" name="txtsearch" value="${sessionScope.SEARCH_KEYWORD}" />
+            <input type="submit" value="Search" />
+        </form>
+
+        <c:choose>
+            <c:when test="${not empty BOOK_RESULT}">
+                <div class="book-container" style="">
+                    <c:forEach var="book" items="${BOOK_RESULT}">
+                        <div class="book-card">
+                            <form action="BookController" method="get">
+                                <input type="hidden" name="action" value="borrow" />
+                                <input type="hidden" name="txtid" value="${book.id}" />
+                                <input type="hidden" name="txtsearch" value="${SEARCH_KEYWORD}" />
+                                <img src="${book.url}" alt="Book Image" class="book-image"/>
+                                <p><strong>ID:</strong> ${book.id}</p>
+                                <p><strong>Title:</strong> ${book.title}</p>
+                                <p><strong>Category:</strong> ${book.category}</p>
+                                <p><strong>Available Copies:</strong> ${book.available_copies}</p>
+                                <c:choose>
+                                    <c:when test="${book.available_copies > 0}">
+                                        <input type="submit" value="Request Borrow" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="out-of-stock">Out of stock</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </form>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <p class="no-result">No books found.</p>
+            </c:otherwise>
+        </c:choose>
+    </body>
 </html>
