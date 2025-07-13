@@ -9,8 +9,20 @@
         <title>View Cart</title>
     </head>
     <body>
+        <p>ROLE = ${sessionScope.ROLE}</p>
+        
         <h1>Your Cart</h1>
         <div>
+            
+            <c:choose>
+                <c:when test="${sessionScope.ROLE eq 'user'}">
+                    <a href="UserDashboard.jsp">Back to Home</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="MainController?action=home">Back to Home</a>
+                </c:otherwise>
+            </c:choose>
+            
             <a href="BookController?action=search&txtsearch=${sessionScope.SEARCH_KEYWORD}">Continue Shopping</a>
         </div>
 

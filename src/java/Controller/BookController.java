@@ -36,12 +36,15 @@ public class BookController extends HttpServlet {
             case "remove":
                 removeFromCart(request, response);
                 break;
-            case "show":
+            case "showNew":
                 showAllNewBook(request, response);
+                break;
+            case "showAvai":
+                showAllAvAilableBook(request, response);
                 break;
             default:
                 // Nếu action không hợp lệ, redirect về trang chủ
-                response.sendRedirect("BookController?action=show");
+                response.sendRedirect("BookController?action=showNew");
         }
     }
 
@@ -61,18 +64,24 @@ public class BookController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String keyword = request.getParameter("txtsearch");
+            String searchby = request.getParameter("searchby");
+
             if (keyword == null) {
                 keyword = "";
             }
+            if (searchby == null) {
+                searchby = "";
+            }
 
             BookDAO dao = new BookDAO();
-            List<Book> list = dao.getBooks(keyword);
+            List<Book> list = dao.getBooks(keyword, searchby);
 
             request.setAttribute("BOOK_RESULT", list);
 
             //đưa cái keyword vào session để tí nó sẽ back lại với kết quả cũ
             HttpSession session = request.getSession();
             session.setAttribute("SEARCH_KEYWORD", keyword);
+            session.setAttribute("SEARCH_BY", searchby);
 
             request.getRequestDispatcher("ViewBook.jsp").forward(request, response);
         } catch (Exception e) {
@@ -86,27 +95,22 @@ public class BookController extends HttpServlet {
     private void borrowBook(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            String returnUrl = request.getParameter("returnUrl");
+            if (returnUrl == null || returnUrl.trim().isEmpty()) {
+                returnUrl = "MainController?action=home";
+            }
+
             HttpSession session = request.getSession();
             Object user = session.getAttribute("user");
 
-            String id = request.getParameter("txtid");
-            String keyword = request.getParameter("txtsearch");
-            if (keyword == null) {
-                keyword = "";
-            }
-
-            // Nếu chưa đăng nhập, redirect đến login
             if (user == null) {
-                // Ghi nhớ URL để quay lại sau login
-                String currentURL = "BookController?action=borrow&txtid=" + URLEncoder.encode(id, "UTF-8")
-                        + "&txtsearch=" + URLEncoder.encode(keyword, "UTF-8");
-                session.setAttribute("redirectBackTo", currentURL);
-
-                // Chuyển hướng đến trang login
+                // Guest --> Login.jsp (lưu nhớ url gốc r mới sang Login)
+                session.setAttribute("redirectBackTo", returnUrl);
                 response.sendRedirect("Login.jsp");
                 return;
             }
 
+            String id = request.getParameter("txtid");
             // Nếu đã đăng nhập → tiếp tục borrow -> thêm vào cart
             BookDAO dao = new BookDAO();
             Book book = dao.getBook(Integer.parseInt(id.trim()));
@@ -132,7 +136,7 @@ public class BookController extends HttpServlet {
                 }
             }
 
-            response.sendRedirect("BookController?action=search&txtsearch=" + URLEncoder.encode(keyword, "UTF-8"));
+            response.sendRedirect(returnUrl);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error while updating config.");
@@ -190,5 +194,32 @@ public class BookController extends HttpServlet {
             request.setAttribute("msg", "Error loading new books for home page: " + e.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
+    }
+
+    private void showAllAvAilableBook(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            BookDAO ab = new BookDAO();
+            ArrayList<Book> abList = ab.getAvailableBook();
+            System.out.println("Found " + abList.size() + " available books.");
+            // debug log
+
+            // Save into session scope then UserDashboard can use them
+            request.setAttribute("LIST_AVAILABLE", abList);
+
+            // Forward to UserDashboard to display 
+            request.getRequestDispatcher("UserDashboard.jsp").forward(request, response);
+
+            System.out.println(">>> DEBUG: Found " + abList.size() + " available books");
+            for (Book b : abList) {
+                System.out.println(">>> Book: " + b.getTitle());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error from loading available books: " + e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
+
     }
 }

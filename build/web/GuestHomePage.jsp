@@ -17,27 +17,7 @@
 
     </head>
     <body>
-        <section id="header">
-            <div class="logo">
-                <a href="MainController?action=home"><img src="#" alt="mini-logo"></a>
-            </div>
-
-            <div class="navbar">
-                <nav>
-                    <ul>
-                        <li><a href="MainController?action=home">Home</a></li>
-                        <li><a href="#">Library Info</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="viewcart.jsp">view cart</a></li>
-                    </ul>
-
-                    <a href="SignUp.html"> <button type="button">Sign up</button></a>
-                    <a href="Login.jsp"> <button type="button">Login</button></a>
-
-                </nav>
-
-            </div>
-        </section>
+        <%@ include file="header.jsp" %>
 
         <section id="sec1">
             <div class="sec1-left">
@@ -49,10 +29,18 @@
                     picked up in person.
                 </p>
 
-                <form action="BookController" method="post">
+                <form class="search-form" action="BookController" method="get">
+                    <select name="searchby">
+                        <option value="">--Search all--</option>
+                        <option value="Title" ${sessionScope.SEARCH_BY eq 'Title' ? 'selected' : ''}>Title</option>
+                        <option value="Author" ${sessionScope.SEARCH_BY eq 'Author' ? 'selected' : ''}>Author</option>
+                        <option value="Category" ${sessionScope.SEARCH_BY eq 'Category' ? 'selected' : ''}>Category</option>
+                    </select>
+
                     <input type="hidden" name="action" value="search" />
-                    <input type="text" name="txtsearch" value="${param.txtsearch != null ? param.txtsearch : ''}"/>
-                    <input type="submit" value="find"/>
+                    <input type="text" name="txtsearch" placeholder="Enter title, author or title....."value="${sessionScope.SEARCH_KEYWORD}" />
+
+                    <input type="submit" value="Search" />
                 </form>
 
 
@@ -75,29 +63,47 @@
                         <c:choose>
                             <c:when test="${not empty LIST_NEW}">
                                 <c:forEach var="book" items="${LIST_NEW}">
-                                    <div class="book-card"> 
-                                        <form action='BookController' method='get'> 
-                                            <input type='hidden' name='action' value='borrow' />
-                                            <input type='hidden' name='txtid' value='${book.id}' />
-                                            <input type='hidden' name='txtsearch' value='${sessionScope.SEARCH_KEYWORD}' />
+                                    <div class="book-card">
+                                        <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                            <img src="${book.url}" alt="Book Cover" style="cursor:pointer;" />
+                                        </a>
 
-                                            <img src='${book.url}' alt="Book Cover" />
-                                            <p><strong>Title:</strong> ${book.title}</p>
-                                            <p><strong>Author:</strong> ${book.author}</p>
-                                            <p><strong>Category:</strong> ${book.category}</p>
-                                            <p><strong>Available:</strong> ${book.available_copies}</p>
+                                        <p><strong>Title:</strong>
+                                            <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                                ${book.title}
+                                            </a>
+                                        </p>
 
-                                            <c:choose>
-                                                <c:when test="${book.available_copies > 0}">
+                                        <p><strong>Author:</strong>
+                                            <a href="BookController?action=search&txtsearch=${book.author}">
+                                                ${book.author}
+                                            </a>
+                                        </p>
+
+                                        <p><strong>Category:</strong>
+                                            <a href="BookController?action=search&txtsearch=${book.category}">
+                                                ${book.category}
+                                            </a>
+                                        </p>
+
+                                        <p><strong>Available:</strong> ${book.available_copies}</p>
+
+                                        <c:choose>
+                                            <c:when test="${book.available_copies > 0}">
+                                                <form action='BookController' method='get'>
+                                                    <input type='hidden' name='action' value='borrow' />
+                                                    <input type='hidden' name='txtid' value='${book.id}' />
+                                                    <input type='hidden' name='txtsearch' value='${sessionScope.SEARCH_KEYWORD}' />
                                                     <input type="submit" value="Request Borrow" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <b>Don't have any new book</b><br/>
-                                                    <a href="index.jsp">Back to Home</a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </form>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <b>Don't have any new book</b><br/>
+                                                <a href="index.jsp">Back to Home</a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
+
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
@@ -164,33 +170,7 @@
             </div>
         </section>
 
-        <footer id="footer">
-            <div class="ft-up">
-                <img src="#" alt="logomini">
-
-                <ul class="ft-up-list">
-                    <li><a href="#" alt="">About Us</a></li>
-                    <li><a href="#" alt="">Contact Us</a></li>
-                    <li><a href="#" alt="">Help Center</a></li>
-                    <li><a href="#" alt="">Blog Post</a></li>
-                </ul>
-
-                <div class="ft-up-icon">
-                    <a href="#" alt=""><i class="fa-solid fa-user"></i></a>
-                    <a href="#" alt=""><i class="fa-regular fa-user"></i></a>
-                    <a href="#" alt=""><i class="fa-light fa-user"></i></a>
-                    <a href="#" alt=""><i class="fa-thin fa-user"></i></a>
-
-                </div>
-            </div>
-
-            <div>
-                <a href="#" alt="">© 2025 Hman. All rights reserved.</a>
-                <a href="#" alt="">Privacy Policy</a>
-                <a href="#" alt="">Terms of Use</a>
-                <a href="#" alt="">Cookie Policy</a>
-            </div>
-        </footer>
+        <%@ include file="footer.jsp" %>
 
 
 

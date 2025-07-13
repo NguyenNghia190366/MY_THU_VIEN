@@ -1,7 +1,10 @@
 package Controller;
 
+import dao.BookDAO;
+import dto.Book;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,42 +19,86 @@ public class MainController extends HttpServlet {
         String web_url = "index.jsp";
         try {
             String action = request.getParameter("action");
+            HttpSession session = null;
+            String role = "";
+            System.out.println(">>> ROLE: " + role);
 
-            // Nếu không có action (truy cập trang chủ), load sách mới
+
+            // Nếu không có action (truy cập trang chủ), load sách mới sẵn 
             if (action == null) {
-                request.setAttribute("action", "show");
+                request.setAttribute("action", "showNew");
                 request.getRequestDispatcher("BookController").forward(request, response);
                 return;
             }
 
             switch (action) {
                 case "home":
-                    request.setAttribute("action", "show");
-                    request.getRequestDispatcher("BookController").forward(request, response);
+                    session = request.getSession(true);
+                    role = (session.getAttribute("ROLE") != null)
+                            ? session.getAttribute("ROLE").toString()
+                            : "guest";
+
+                    if ("user".equalsIgnoreCase(role)) {
+                        request.getRequestDispatcher("BookController?action=showAvai").forward(request, response);
+                    } else {
+                        request.getRequestDispatcher("BookController?action=showNew").forward(request, response);
+                    }
                     return;
 
                 case "login":
                     request.getRequestDispatcher("LoginController").forward(request, response);
                     break;
+
                 case "Change":
                     web_url = "ShowSystemConfig";
                     break;
+
                 case "bookDetail":
+                    try {
                     String bookID = request.getParameter("bookID");
                     if (bookID != null) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("BOOK", bookID);
+                        BookDAO dao = new BookDAO();
+                        Book book = dao.findBookById(Integer.parseInt(bookID));
+                        System.out.println("Book ID: " + bookID);
+                        System.out.println("Book found: " + book);
+                        request.setAttribute("BOOK_DETAIL", book);
+                        Cookie lastCategory = new Cookie("lastCategory", book.getCategory());
+                        lastCategory.setMaxAge(60 * 60 * 24); // 1 ngày
+                        response.addCookie(lastCategory);
+
+                        session = request.getSession(false);
+                        // Lấy ROLE từ session nếu có, không thì gán mặc định là "guest"
+                        role = (session != null && session.getAttribute("ROLE") != null)
+                                ? session.getAttribute("ROLE").toString() : "guest";
+
+                        if ("admin".equalsIgnoreCase(role)) {
+                            request.getRequestDispatcher("BookDetail.jsp").forward(request, response);
+                        } else {
+                            request.getRequestDispatcher("BookDetailUser.jsp").forward(request, response);
+                        }
+                        return;
+                    } else {
+                        request.setAttribute("msg", "Book ID is missing.");
+                        request.getRequestDispatcher("error.jsp").forward(request, response);
+                        return;
                     }
-                    web_url = "BookDetail.jsp";
-                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("msg", "Error loading book detail.");
+                    request.getRequestDispatcher("error.jsp").forward(request, response);
+                    return;
+                }
+
                 case "save change this book":
                     web_url = "EditBookController";
                     break;
+
                 case "approve":
                 case "reject":
                 case "borrowed":
                     web_url = "RequestChoiceController";
                     break;
+
                 default:
                     request.setAttribute("msg", "Unknown action: " + action);
                     request.getRequestDispatcher("error.jsp").forward(request, response);

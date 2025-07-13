@@ -84,13 +84,15 @@ public class LoginController extends HttpServlet {
         if (us != null) {
             //tinh nang: welcome, shopping cart, request borrow, change profile,...
             // luu us object vao session cua client vi can no cho cac tinh nang tiep theo
-            HttpSession s = request.getSession();
-            s.setAttribute("user", us);
+            HttpSession session = request.getSession();
+            session.setAttribute("user", us);
+            //set role trong session sau khi login xong để dành cho việc chuyển trang
+            session.setAttribute("ROLE", us.getRole());
 
             // Nếu có redirectBackTo (do bị chuyển hướng lúc chưa login), quay về lại đó
-            String redirect = (String) s.getAttribute("redirectBackTo");
+            String redirect = (String) session.getAttribute("redirectBackTo");
             if (redirect != null) {
-                s.removeAttribute("redirectBackTo"); 
+                session.removeAttribute("redirectBackTo"); 
                 response.sendRedirect(redirect);
                 return;
             }

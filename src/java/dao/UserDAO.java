@@ -75,4 +75,39 @@ public class UserDAO {
         }
         return user;
     }
+
+    //Ham nay de update user's name and pass by id and return integer
+    public int UpdateUser(int id, String name, String password) {
+        int result = 0;
+        Connection cn = null;
+        PreparedStatement pst = null;
+
+        try {
+            cn = DBUtils.getConnection();
+            if (cn != null) {
+                String sql = "UPDATE [dbo].[users] SET [name] = ?, [password] = ? WHERE [id] = ?";
+                pst = cn.prepareStatement(sql);
+                pst.setString(1, name);
+                pst.setString(2, password);
+                pst.setInt(3, id);
+
+                result = pst.executeUpdate();  // Trả về số dòng bị ảnh hưởng
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
 }

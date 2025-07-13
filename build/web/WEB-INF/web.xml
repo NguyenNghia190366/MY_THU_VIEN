@@ -16,6 +16,10 @@
         <servlet-name>LogoutController</servlet-name>
         <servlet-class>Controller.LogoutController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ChangeProfileController</servlet-name>
+        <servlet-class>Controller.ChangeProfileController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainController</servlet-name>
         <url-pattern>/MainController</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>LogoutController</servlet-name>
         <url-pattern>/LogoutController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChangeProfileController</servlet-name>
+        <url-pattern>/ChangeProfileController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
