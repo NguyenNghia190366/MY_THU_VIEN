@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import = "java.util.ArrayList"%>
+<%@ page import="dto.Book" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,7 +31,7 @@
                         <li><a href="viewcart.jsp">view cart</a></li>
                     </ul>
 
-                    <a href="SignUp.html"> <button type="button">Sign up</button></a>
+                    <a href="register.jsp"> <button type="button">Sign up</button></a>
                     <a href="Login.jsp"> <button type="button">Login</button></a>
 
                 </nav>
@@ -69,18 +70,23 @@
 
                     <div class="carousel-track">
                         <%
-                       // ArrayList<Book> list = null;//(ArrayList<Book>) request.getAttribute("LIST_NEW");
-                       // if (list != null && !list.isEmpty()) {
-                       //     for (Book book : list) {
+    ArrayList<Book> list = (ArrayList<Book>) request.getAttribute("LIST_NEW");
+    if (list != null && !list.isEmpty()) {
+        for (Book book : list) {
                         %>
-                        
+                        <div class="book-card">
+                            <img src="<%= book.getUrl() %>" alt="book image" width="100">
+                            <h4><%= book.getTitle() %></h4>
+                            <p>By: <%= book.getAuthor() %></p>
+                            <a href="MainController?action=bookDetail&bookID=<%= book.getId() %>">View Details</a>
+                        </div>
                         <%
-                        //        }
-                         //   } else {
+                                }
+                            } else {
                         %>
                         <p>No new books available.</p>
                         <%
-                       //     }
+                            }
                         %>
 
                     </div>

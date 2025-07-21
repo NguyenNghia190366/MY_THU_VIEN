@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import mylib.DBUtils;
 
 /**
@@ -17,27 +18,28 @@ import mylib.DBUtils;
  * @author Admin
  */
 public class BookDAO {
-    public ArrayList<Book> viewBookList(){
+
+    public ArrayList<Book> viewBookList() {
         ArrayList<Book> list = new ArrayList<>();
         Connection cn = null;
         try {
             cn = DBUtils.getConnection();
-            if(cn != null){
-                String sql = "SELECT  [id]\n" +
-"      ,[title]\n" +
-"      ,[author]\n" +
-"      ,[isbn]\n" +
-"      ,[category]\n" +
-"      ,[published_year]\n" +
-"      ,[total_copies]\n" +
-"      ,[available_copies]\n" +
-"      ,[status]\n" +
-"      ,[url]\n" +
-"  FROM [library_system].[dbo].[books]";
-                Statement st=cn.createStatement();
-                ResultSet table=st.executeQuery(sql);
-                if(table!=null){
-                    while(table.next()){
+            if (cn != null) {
+                String sql = "SELECT  [id]\n"
+                        + "      ,[title]\n"
+                        + "      ,[author]\n"
+                        + "      ,[isbn]\n"
+                        + "      ,[category]\n"
+                        + "      ,[published_year]\n"
+                        + "      ,[total_copies]\n"
+                        + "      ,[available_copies]\n"
+                        + "      ,[status]\n"
+                        + "      ,[url]\n"
+                        + "  FROM [library_system].[dbo].[books]";
+                Statement st = cn.createStatement();
+                ResultSet table = st.executeQuery(sql);
+                if (table != null) {
+                    while (table.next()) {
                         int id = table.getInt("id");
                         String title = table.getString("title");
                         String author = table.getString("author");
@@ -57,25 +59,106 @@ public class BookDAO {
         }
         return list;
     }
-    
-    public Book findBookById(int id){
+
+    //-----------------Hien sach moi nhat trong homepage----------------
+    public ArrayList<Book> getNewestBooks(int limit) {
+        ArrayList<Book> list = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBUtils.getConnection();
+            if (cn != null) {
+                String sql = "SELECT TOP (?) * FROM books ORDER BY published_year DESC";
+                PreparedStatement pst = cn.prepareStatement(sql);
+                pst.setInt(1, limit);
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    Book book = new Book(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getString("isbn"),
+                            rs.getString("category"),
+                            rs.getInt("published_year"),
+                            rs.getInt("total_copies"),
+                            rs.getInt("available_copies"),
+                            rs.getString("status"),
+                            rs.getString("url")
+                    );
+                    list.add(book);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+//----------------------------Search Books-----------------------------------
+   public List<Book> searchBooks(String keyword) {
+    List<Book> list = new ArrayList<>();
+    try {
+        String sql = "SELECT * FROM Books WHERE title LIKE ? OR author LIKE ? OR category LIKE ?";
+        PreparedStatement ps = DBUtils.getConnection().prepareStatement(sql);
+        String likeKeyword = "%" + keyword + "%";
+        ps.setString(1, likeKeyword);
+        ps.setString(2, likeKeyword);
+        ps.setString(3, likeKeyword);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(new Book(
+                rs.getInt("id"),
+                rs.getString("title"),
+                rs.getString("author"),
+                rs.getInt("available_copies"),
+                rs.getString("url")
+            ));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+    //------------------------ Lay Book theo ID ------------------------
+    public Book getBookById(int id) throws Exception {
+    String sql = "SELECT * FROM books WHERE id = ?";
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Book(
+                    rs.getInt("id"),
+                    rs.getString("title"),
+                    rs.getString("author"),
+                    rs.getInt("available_copies"),
+                    rs.getString("url")
+                );
+            }
+        }
+    }
+    return null;
+}
+
+
+    public Book findBookById(int id) {
         ArrayList<Book> list = this.viewBookList();
         Book book = null;
-        for(int i = 0;i<list.size();i++){
-            if(id == list.get(i).getId()){
+        for (int i = 0; i < list.size(); i++) {
+            if (id == list.get(i).getId()) {
                 book = list.get(i);
                 //book.getStatus().equals(book)
             }
         }
         return book;
     }
-    
-    public void editBookInformation(Book book){
+
+    public void editBookInformation(Book book) {
         Connection cn = null;
         try {
-            cn=DBUtils.getConnection();
-            if(cn!=null){
-                String sql="UPDATE books SET TITLE=?, AUTHOR=?, isbn=?, category=?, published_year=?, total_copies=?,available_copies=?,status=?,url=? WHERE id=?";
+            cn = DBUtils.getConnection();
+            if (cn != null) {
+                String sql = "UPDATE books SET TITLE=?, AUTHOR=?, isbn=?, category=?, published_year=?, total_copies=?,available_copies=?,status=?,url=? WHERE id=?";
                 PreparedStatement st = cn.prepareStatement(sql);
                 st.setString(1, book.getTitle());
                 st.setString(2, book.getAuthor());

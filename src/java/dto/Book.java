@@ -61,6 +61,16 @@ public class Book {
         this.url = url;
     }
 
+    public Book(int id, String title, String author, int available_copies, String url ) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.available_copies = available_copies;
+        this.url = url;
+    }
+    
+    
+
     public int getId() {
         return id;
     }

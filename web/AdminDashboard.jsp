@@ -5,11 +5,21 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="dto.User" %>
+
+<%
+    
+    if (session == null || session.getAttribute("USER") == null) {
+        response.sendRedirect("Login.jsp");
+        return;
+    }
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Admin Dashboard</title>
         <style>
             body{
                 display: flex;
@@ -23,7 +33,7 @@
                 padding-left: 20px;
             }
             .mainContent{
-                
+
                 padding-left: 20px;
                 padding-top: 20px;
                 width: 83%;
@@ -35,7 +45,7 @@
             .menu a{
                 color: white;
             }
-            
+
         </style>
     </head>
     <body>
@@ -44,6 +54,9 @@
             <a href="ViewBook.jsp">View Books</a>
             <a href="ShowRequest.jsp">View Requests</a>
             <a href="ShowBorrowRecord.jsp">View Borrow Records</a>
+            <a href="MainController?action=logout"> <button type="button">Logout</button></a>
+            <a href="MainController?action=changeProfile"> <button type="button">Change profile</button></a>
+
         </div>
         <div class = "mainContent">bbbbbbbbbb</div>
     </body>

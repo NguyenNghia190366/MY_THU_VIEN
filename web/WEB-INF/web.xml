@@ -14,6 +14,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>Homepage.jsp</welcome-file>
+        <welcome-file>LoadHomeNewBooksController</welcome-file>
     </welcome-file-list>
 </web-app>
