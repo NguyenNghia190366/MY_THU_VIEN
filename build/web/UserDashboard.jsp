@@ -53,7 +53,7 @@
                     <ul>
                         <li><a href="MainController?action=home">Home</a></li>
                         <li><a href="#">Library Info</a></li>
-                        <li><a href="#">View History</a></li>
+                        <li><a href="MainController?action=viewHistory">View History</a></li>
                         <li><a href="viewcart.jsp">view cart</a></li>
                     </ul>
 

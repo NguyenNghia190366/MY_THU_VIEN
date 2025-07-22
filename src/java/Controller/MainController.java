@@ -59,6 +59,14 @@ public class MainController extends HttpServlet {
                             web_url = "ShowSystemConfig";
                             break;
                         }
+                        
+                        
+                        case "viewHistory": {
+                            web_url = "BorrowHistoryController";
+                            break;
+                        }
+                        
+                        
                         case "bookDetail": {
                             HttpSession session = request.getSession();
                             if (session.getAttribute("BOOK") != null) {
