@@ -44,6 +44,7 @@ public class LoginController extends HttpServlet {
                 
                 HttpSession session = request.getSession();
                 session.setAttribute("USER", user);
+                session.setAttribute("role", user.getRole());
 
                 if (user.getRole().equalsIgnoreCase("user")) {
                     response.sendRedirect("UserDashboard.jsp");

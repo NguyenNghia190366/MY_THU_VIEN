@@ -8,6 +8,7 @@ import dto.Book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,25 +121,37 @@ public class BookDAO {
 }
 
     //------------------------ Lay Book theo ID ------------------------
-    public Book getBookById(int id) throws Exception {
-    String sql = "SELECT * FROM books WHERE id = ?";
-    try (Connection conn = DBUtils.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, id);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new Book(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("author"),
-                    rs.getInt("available_copies"),
-                    rs.getString("url")
-                );
+
+       public Book getBookById(int id) {
+        Book book = null;
+        Connection cn = null;
+        try {
+            cn = DBUtils.getConnection();
+            if (cn != null) {
+                String sql = "SELECT * FROM books WHERE id = ? AND status = 'active'";
+                PreparedStatement st = cn.prepareStatement(sql);
+                st.setInt(1, id);
+                ResultSet rs = st.executeQuery();
+                if (rs != null) {
+                    while (rs.next()) {
+                        book = new Book();
+                        book.setId(rs.getInt("id"));
+                        book.setTitle(rs.getString("title"));
+                        book.setAuthor(rs.getString("author"));
+                        book.setIsbn(rs.getString("isbn"));
+                        book.setCategory(rs.getString("category"));
+                        book.setPublished_year(rs.getInt("published_year"));
+                        book.setTotal_copies(rs.getInt("total_copies"));
+                        book.setAvailable_copies(rs.getInt("available_copies"));
+                        book.setStatus(rs.getString("status"));
+                    }
+                }
             }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
+        return book;
     }
-    return null;
-}
 
 
     public Book findBookById(int id) {

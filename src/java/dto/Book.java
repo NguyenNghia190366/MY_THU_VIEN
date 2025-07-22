@@ -32,9 +32,22 @@ public class Book {
         this.status = status;
         this.url = url;
     }
-    
-    
 
+    public Book() {
+    }
+    
+    public Book(int id, String title, String author, String isbn, String category,
+            int publishedYear, int totalCopies, int availableCopies, String status) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.category = category;
+        this.published_year = publishedYear;
+        this.total_copies = totalCopies;
+        this.available_copies = availableCopies;
+        this.status = status;
+    }
     public Book(int id, String title, String author, String isbn, String category, int published_year, int total_copies, String status,String url) {
         this.id = id;
         this.title = title;
@@ -68,6 +81,8 @@ public class Book {
         this.available_copies = available_copies;
         this.url = url;
     }
+
+    
     
     
 

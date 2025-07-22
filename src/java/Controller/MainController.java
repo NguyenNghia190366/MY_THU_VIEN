@@ -75,6 +75,11 @@ public class MainController extends HttpServlet {
                             web_url = "EditBookController";
                             break;
                         }
+                        case "borrow":
+                        case "return":
+                            web_url = "BookRequestController";
+                            break;
+
                         case "approve": {
                             web_url = "RequestChoiceController";
                             break;
