@@ -1,5 +1,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="dto.Book"%>
+<%@page import="dto.User"%>
+<%
+    Book book = (Book) request.getAttribute("book");
+    if (book == null) {
+        out.println("<p>Book not found or invalid ID.</p>");
+        return;
+    }
+
+    String role = (String) session.getAttribute("role");
+    User user = (User) session.getAttribute("USER");
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -11,84 +23,115 @@
                 padding: 30px;
                 background-color: #f9f9f9;
             }
-            h2 {
-                margin-bottom: 20px;
-            }
             form {
+                width: 500px;
                 background: #fff;
                 padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                width: 500px;
+                border-radius: 12px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.15);
             }
             label {
-                display: block;
-                margin-top: 10px;
+                margin-top: 12px;
                 font-weight: bold;
+                display: block;
             }
             input[type="text"], input[type="number"] {
                 width: 100%;
                 padding: 8px;
                 margin-top: 5px;
                 border: 1px solid #ccc;
-                border-radius: 5px;
+                border-radius: 6px;
+            }
+            .action-buttons {
+                margin-top: 20px;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
             }
             input[type="submit"] {
-                margin-top: 20px;
                 padding: 10px 20px;
-                background-color: #4CAF50;
+                background-color: #007BFF;
                 color: white;
                 border: none;
-                border-radius: 5px;
+                border-radius: 6px;
                 cursor: pointer;
             }
             input[type="submit"]:hover {
-                background-color: #45a049;
+                background-color: #0056b3;
             }
         </style>
     </head>
     <body>
+
+        <% if (book != null) { %>
         <h2>Book Detail</h2>
-        <%
-            Book book = (Book) request.getAttribute("book");
-            if (book != null) {
-        %>
-        <form action="MainController" method="post">
+        <form>
             <label>ID:</label>
-            <input type="hidden" name="txtidbook" value="<%=book.getId()%>">
-            <span><%=book.getId()%></span>
+            <span><%= book.getId() %></span>
 
             <label>Title:</label>
-            <input type="text" name="txttitlebook" value="<%=book.getTitle()%>">
+            <span><%= book.getTitle() %></span>
 
             <label>Author:</label>
-            <input type="text" name="txtauthorbook" value="<%=book.getAuthor()%>">
+            <span><%= book.getAuthor() %></span>
 
             <label>ISBN:</label>
-            <input type="text" name="txtisbnbook" value="<%=book.getIsbn() != null ? book.getIsbn() : ""%>">
+            <span><%= book.getIsbn() != null ? book.getIsbn() : "" %></span>
 
             <label>Category:</label>
-            <input type="text" name="txtcategorybook" value="<%=book.getCategory() != null ? book.getCategory() : ""%>">
+            <span><%= book.getCategory() != null ? book.getCategory() : "" %></span>
 
             <label>Published Year:</label>
-            <input type="number" name="txtpublishedyearbook" value="<%=book.getPublished_year()%>">
+            <span><%= book.getPublished_year() %></span>
 
             <label>Total Copies:</label>
-            <input type="number" name="txttotalcopiesbook" value="<%=book.getTotal_copies()%>">
+            <span><%= book.getTotal_copies() %></span>
 
             <label>Available Copies:</label>
-            <input type="number" name="txtavailablecopiesbook" value="<%=book.getAvailable_copies()%>">
+            <span><%= book.getAvailable_copies() %></span>
 
             <label>Status:</label>
-            <input type="text" name="txtstatusbook" value="<%=book.getStatus() != null ? book.getStatus() : ""%>">
+            <span><%= book.getStatus() != null ? book.getStatus() : "" %></span>
 
             <label>Picture URL:</label>
-            <input type="text" name="txturlbook" value="<%=book.getUrl()%>">
-
-            <input type="submit" name="action" value="save change this book">
+            <span><%= book.getUrl() %></span>
         </form>
-        <% } else { %>
-            <p>Book not found or invalid book ID.</p>
+
+        <div class="action-buttons">
+            <% if ("Admin".equalsIgnoreCase(role)) { %>
+            <form action="MainController" method="post">
+                <input type="hidden" name="txtidbook" value="<%= book.getId() %>">
+                <input type="submit" name="action" value="save change this book">
+            </form>
+            <% } %>
+
+            <% if ("User".equalsIgnoreCase(role) && user != null) { %>
+            <!-- Form cho Borrow -->
+            <form action="BookRequestController" method="post">
+                <input type="hidden" name="id" value="<%= book.getId() %>">
+                <input type="hidden" name="action" value="borrow">
+                <input type="submit" value="Borrow Book">
+            </form>
+
+            <!-- Form cho Return -->
+            <form action="BookRequestController" method="post">
+                <input type="hidden" name="id" value="<%= book.getId() %>">
+                <input type="hidden" name="action" value="return">
+                <input type="submit" value="Return Book">
+            </form>
+            <% } %>
+        </div>
+
+        <% if (request.getAttribute("message") != null) { %>
+        <p style="color: green;"><%= request.getAttribute("message") %></p>
         <% } %>
+        <% if (request.getAttribute("error") != null) { %>
+        <p style="color: red;"><%= request.getAttribute("error") %></p>
+        <% } %>
+
+        <% } else { %>
+        <h3>Book not found or invalid ID.</h3>
+        <% } %>
+
     </body>
 </html>

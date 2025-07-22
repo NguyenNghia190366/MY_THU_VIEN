@@ -50,7 +50,7 @@
                 </p>
 
                 <form action="SearchBookController">
-                    <input type="text" name="txtsearch" value="<%= (request.getParameter("txtsearch")!=null)?request.getParameter("txtsearch"):"" %>"/>
+                    <input type="text" name="txtsearch" placeholder="Enter title, author or category..."  value="<%= (request.getParameter("txtsearch")!=null)?request.getParameter("txtsearch"):"" %>"/>
                     <input type="submit" value="find"/>
                 </form>
             </div>

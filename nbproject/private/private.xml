@@ -2,6 +2,34 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/dao/BookRequestDAO.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/AdminDashboard.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/BookDetail.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/RequestChoiceController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/ShowBorrowRecord.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/LoadHomeNewBooksController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/ShowRequest.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/UserDashboard.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/SearchBookController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/dto/User.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/dao/UserDAO.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/ChangeProfileController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/RegisterController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/Login.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/register.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/changeProfile.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/dto/BookRequest.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/Homepage.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/ViewBook.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/ViewBookDetailController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/LoginController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/search.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/SystemConfig.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/dao/BookDAO.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/MainController.java</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/web/ShowRequestInfo.jsp</file>
+            <file>file:/D:/Linh%20tinh/studying/Semester%204/PRJ301/project%20PRJ301/working/clone_Nghia/MY_THU_VIEN/src/java/Controller/UserDashboard.java</file>
+        </group>
     </open-files>
 </project-private>
