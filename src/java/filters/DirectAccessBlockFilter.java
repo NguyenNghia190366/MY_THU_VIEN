@@ -21,8 +21,8 @@ public class DirectAccessBlockFilter implements Filter {
         //Luôn đảm bảo ROLE tồn tại trước
         HttpSession session = req.getSession(true);
         if (session.getAttribute("ROLE") == null) {
-            if (session.getAttribute("user") != null) {
-                session.setAttribute("ROLE", "user");
+            if (session.getAttribute("USER") != null) {
+                session.setAttribute("ROLE", "USER");
             } else {
                 session.setAttribute("ROLE", "guest");
             }
@@ -40,45 +40,65 @@ public class DirectAccessBlockFilter implements Filter {
             return;
         }
 
-        // ✅ Nếu truy cập trực tiếp index.jsp thì chặn và redirect về MainController
-        if (uri.endsWith("GuestHomePage.jsp")) {
-            res.sendRedirect("MainController?action=home");
-            return;
-        }
+//        // ✅ Nếu truy cập trực tiếp index.jsp thì chặn và redirect về MainController
+//        if (uri.endsWith("GuestHomePage.jsp")) {
+//            res.sendRedirect("MainController?action=home");
+//            return;
+//        }
+        
+        
 
         // Nếu truy cập AdminDashboard.jsp thì chặn nếu không phải admin
         if (uri.endsWith("AdminDashboard.jsp")) {
-            if (session.getAttribute("user") != null) {
-                Object role = ((dto.User) session.getAttribute("user")).getRole();
+            if (session.getAttribute("USER") != null) {
+                Object role = ((dto.User) session.getAttribute("USER")).getRole();
                 if ("admin".equalsIgnoreCase(role.toString())) {
                     chain.doFilter(request, response);
                 } else {
-                    session.setAttribute("msg", "You do not have access to the Admin page!");
+                    session.setAttribute("ERROR_MESSAGE", "You do not have access to the Admin page!");
                     res.sendRedirect("UserDashboard.jsp");
                 }
             } else {
-                session.setAttribute("msg", "Please login first!");
+                session.setAttribute("ERROR_MESSAGE", "Please login first!");
                 res.sendRedirect("Login.jsp");
             }
             return;
         }
         
-        // Nếu truy cập UserDashboard.jsp thì chặn nếu kh phải user 
-        if(uri.endsWith("UserDashboard.jsp")){
-            if(session.getAttribute("user") != null){
-                Object role = ((dto.User) session.getAttribute("user")).getRole();
-                if("user".equalsIgnoreCase(role.toString())){
+         // Nếu truy cập UpdateInventory.jsp thì chặn nếu không phải admin
+        if (uri.endsWith("UpdateInventory.jsp")) {
+            if (session.getAttribute("USER") != null) {
+                Object role = ((dto.User) session.getAttribute("USER")).getRole();
+                if ("admin".equalsIgnoreCase(role.toString())) {
                     chain.doFilter(request, response);
-                }else if("admin".equalsIgnoreCase(role.toString())){
-                    session.setAttribute("msg", "You are admin, you do not have access to the User page!");
-                    res.sendRedirect("AdminDashboard.jsp");
-                } else{
-                    session.setAttribute("msg", "Please login first!");
-                    res.sendRedirect("Login.jsp");
+                } else {
+                    session.setAttribute("ERROR_MESSAGE", "You do not have access to the Admin page!");
+                    res.sendRedirect("UserDashboard.jsp");
                 }
+            } else {
+                session.setAttribute("ERROR_MESSAGE", "Please login first!");
+                res.sendRedirect("Login.jsp");
             }
             return;
         }
+
+        // Nếu truy cập UserDashboard.jsp thì chặn nếu kh phải user 
+        if (uri.endsWith("UserDashboard.jsp")) {
+            if (session.getAttribute("USER") != null) {
+                Object role = ((dto.User) session.getAttribute("USER")).getRole();
+                if ("user".equalsIgnoreCase(role.toString())) {
+                    chain.doFilter(request, response);
+                } else if ("admin".equalsIgnoreCase(role.toString())) {
+                    session.setAttribute("ERROR_MESSAGE", "You are admin, you do not have access to the User page!");
+                    res.sendRedirect("ConfigController?action=show");
+                }
+            } else {
+                session.setAttribute("ERROR_MESSAGE", "Please login first!");
+                res.sendRedirect("Login.jsp");
+            }
+            return;
+        }
+
 
         // Còn lại thì cho đi tiếp
         chain.doFilter(request, response);

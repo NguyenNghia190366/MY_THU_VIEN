@@ -35,6 +35,34 @@ public class EditBookController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             try {
+                String action = (String) request.getParameter("action");
+                if(action.equals("add book")){
+                int id = 1010;
+                String title = request.getParameter("txttitlebook");
+                String author = request.getParameter("txtauthorbook");
+                String isbn = request.getParameter("txtisbnbook");
+                String category = request.getParameter("txtcategorybook");
+                int published_year = Integer.parseInt(request.getParameter("txtpublishedyearbook"));
+                int total_copies = Integer.parseInt(request.getParameter("txttotalcopiesbook"));
+                int available_copies = total_copies;
+                String status = "active";
+                String url = request.getParameter("txturlbook");
+                Book book = new Book(id, title, author, isbn, category, published_year, total_copies, available_copies, status, url);
+                BookDAO d = new BookDAO();
+               int re = d.insertBook(book);
+               if(re > 0){
+                   request.setAttribute("ADDBOOKCOMPLETE", "The book was add complete!!!!!");
+                   request.getRequestDispatcher("AddBook.jsp").forward(request, response);
+               }
+                } else if(action.equals("remove book")){
+                int id = Integer.parseInt(request.getParameter("txtidbook"));
+                BookDAO d = new BookDAO();
+              int re = d.changeStatusOfBook(id);
+               if(re > 0){
+                   request.setAttribute("REMOVEBOOKCOMPLETE", "The book was remove complete!!!!!");
+                   request.getRequestDispatcher("BookDetail.jsp").forward(request, response);
+               }
+                } else {
                 int id = Integer.parseInt(request.getParameter("txtidbook"));
                 String title = request.getParameter("txttitlebook");
                 String author = request.getParameter("txtauthorbook");
@@ -49,6 +77,7 @@ public class EditBookController extends HttpServlet {
                 BookDAO d = new BookDAO();
                 d.editBookInformation(book);
                request.getRequestDispatcher("ViewBook.jsp").forward(request, response);
+                }
             } catch (Exception e) {
             }
         }

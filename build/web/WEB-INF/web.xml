@@ -20,6 +20,30 @@
         <servlet-name>ChangeProfileController</servlet-name>
         <servlet-class>Controller.ChangeProfileController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>InventoryController</servlet-name>
+        <servlet-class>Controller.InventoryController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StatisticController</servlet-name>
+        <servlet-class>Controller.StatisticController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserCheckController</servlet-name>
+        <servlet-class>Controller.UserCheckController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RegisterController</servlet-name>
+        <servlet-class>Controller.RegisterController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BorrowHistoryController</servlet-name>
+        <servlet-class>Controller.BorrowHistoryController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BookRequestController</servlet-name>
+        <servlet-class>Controller.BookRequestController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainController</servlet-name>
         <url-pattern>/MainController</url-pattern>
@@ -39,6 +63,30 @@
     <servlet-mapping>
         <servlet-name>ChangeProfileController</servlet-name>
         <url-pattern>/ChangeProfileController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InventoryController</servlet-name>
+        <url-pattern>/InventoryController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StatisticController</servlet-name>
+        <url-pattern>/StatisticController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserCheckController</servlet-name>
+        <url-pattern>/UserCheckController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterController</servlet-name>
+        <url-pattern>/RegisterController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BorrowHistoryController</servlet-name>
+        <url-pattern>/BorrowHistoryController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookRequestController</servlet-name>
+        <url-pattern>/BookRequestController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

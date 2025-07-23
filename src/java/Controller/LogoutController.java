@@ -30,7 +30,7 @@ public class LogoutController extends HttpServlet {
         try {
             HttpSession s = request.getSession();
             s.invalidate();
-            response.sendRedirect("MainController?action=home");
+            response.sendRedirect("BookController?action=showNew");
         } catch (Exception e) {
             e.printStackTrace();
         }

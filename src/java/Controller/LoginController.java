@@ -74,42 +74,49 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
-        String email = request.getParameter("txtemail");
-        String password = request.getParameter("txtpassword");
+        try {
+            String email = request.getParameter("txtemail");
+            String password = request.getParameter("txtpassword");
 
-        UserDAO d = new UserDAO();
-        User us = d.checkUserExist(email, password);
-
-        if (us != null) {
-            //tinh nang: welcome, shopping cart, request borrow, change profile,...
-            // luu us object vao session cua client vi can no cho cac tinh nang tiep theo
-            HttpSession session = request.getSession();
-            session.setAttribute("user", us);
-            //set role trong session sau khi login xong để dành cho việc chuyển trang
-            session.setAttribute("ROLE", us.getRole());
-
-            // Nếu có redirectBackTo (do bị chuyển hướng lúc chưa login), quay về lại đó
-            String redirect = (String) session.getAttribute("redirectBackTo");
-            if (redirect != null) {
-                session.removeAttribute("redirectBackTo"); 
-                response.sendRedirect(redirect);
+            if (email == null || password == null) {
+                request.setAttribute("ERROR_MESSAGE", "Email or Password is invalid");
+                request.getRequestDispatcher("Login.jsp").forward(request, response);
                 return;
             }
 
-            // Redirect như thường khi login xong
-            if (us.getRole().equalsIgnoreCase("admin")) {
-                response.sendRedirect("ConfigController?action=show");
-            } else if (us.getRole().equalsIgnoreCase("user")) {
-                response.sendRedirect("UserDashboard.jsp");  // servlet --> them duoi jsp
+            UserDAO d = new UserDAO();
+            User us = d.checkUserExist(email, password);
+
+            if (us != null) {
+                if(us.getStatus().equals("blocked")){
+                    request.setAttribute("ERROR", "Your account was blocked. You can't not log in");
+                request.getRequestDispatcher("Login.jsp").forward(request, response);
+                } else {
+               
+                HttpSession session = request.getSession();
+                session.setAttribute("USER", us);
+                session.setAttribute("ROLE", us.getRole());
+
+                // Lấy redirectBackTo từ PARAMETER chứ không phải session!
+                String redirect = request.getParameter("REDIRECT_BACK_TO");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                    return;
+                }
+
+                // Bình thường nếu không có redirect thì xử lý tiếp
+                if (us.getRole().equalsIgnoreCase("admin")) {
+                    response.sendRedirect("MainController?action=home");
+                } else if (us.getRole().equalsIgnoreCase("user")) {
+                    response.sendRedirect("BookController?action=showAvai");
+                }}
+            } else {
+                request.setAttribute("ERROR_MESSAGE", "Email or Password is invalid");
+                request.getRequestDispatcher("Login.jsp").forward(request, response);
             }
-        } else {
-            //day loi tu LoginController ve trang Login de in ra man hinh
-            //muon day thi phai luu data trong upplication(?), session or request
-            //redirect or dispatcher
-            //chon dispatcher: request ben nay cung la request ben kia. in loi ngay tren form minh nhao
-            request.setAttribute("ERROR", "Email or Password is invalid");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("ERROR", "Have an error when do login");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
 

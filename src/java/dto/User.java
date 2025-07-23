@@ -9,12 +9,19 @@ package dto;
  * @author Admin
  */
 public class User {
+
     private int id;
     private String name;
     private String email;
     private String password;
     private String role;
     private String status;
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
     public User(int id, String name, String email, String password, String role, String status) {
         this.id = id;
@@ -81,6 +88,5 @@ public class User {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
 }

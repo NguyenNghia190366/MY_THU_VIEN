@@ -12,12 +12,29 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <link rel="stylesheet" href="css/guestHomePage.css">
-        <script src="js/guestHomePage.js"></script>
-
-
     </head>
-    <body>
-        <%@ include file="header.jsp" %>
+    <body> 
+        <section id="header">
+            <div class="logo">
+                <a href="MainController?action=home"><img src="#" alt="mini-logo"></a>
+            </div>
+
+            <div class="navbar">
+                <nav>
+                    <ul>
+                        <li><a href="MainController?action=home">Home</a></li>
+                        <li><a href="#">Library Info</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="viewcart.jsp">view cart</a></li>
+                    </ul>
+
+                    <a href="SignUp.html"> <button type="button">Sign up</button></a>
+                    <a href="Login.jsp"> <button type="button">Login</button></a>
+
+                </nav>
+
+            </div>
+        </section>
 
         <section id="sec1">
             <div class="sec1-left">
@@ -29,7 +46,8 @@
                     picked up in person.
                 </p>
 
-                <form class="search-form" action="BookController" method="get">
+                <form class="search-form" action="MainController" method="post">
+                    <input type="hidden" name="action" value="search" />
                     <select name="searchby">
                         <option value="">--Search all--</option>
                         <option value="Title" ${sessionScope.SEARCH_BY eq 'Title' ? 'selected' : ''}>Title</option>
@@ -37,7 +55,6 @@
                         <option value="Category" ${sessionScope.SEARCH_BY eq 'Category' ? 'selected' : ''}>Category</option>
                     </select>
 
-                    <input type="hidden" name="action" value="search" />
                     <input type="text" name="txtsearch" placeholder="Enter title, author or title....."value="${sessionScope.SEARCH_KEYWORD}" />
 
                     <input type="submit" value="Search" />
@@ -56,69 +73,56 @@
                     Discover the books that our community loves the most.
                 </p>
 
-                <div class="carousel-container"> 
-                    <button class="prev">&#10094;</button>
+                <div class="grid-container">
+                    <c:forEach var="book" items="${LIST_NEW}">
+                        <div class="book-card">
+                            <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                <img src="${book.url}" alt="Book Cover" style="cursor:pointer;" />
+                            </a>
 
-                    <div class="carousel-track">
-                        <c:choose>
-                            <c:when test="${not empty LIST_NEW}">
-                                <c:forEach var="book" items="${LIST_NEW}">
-                                    <div class="book-card">
-                                        <a href="MainController?action=bookDetail&bookID=${book.id}">
-                                            <img src="${book.url}" alt="Book Cover" style="cursor:pointer;" />
-                                        </a>
+                            <p><strong>Title:</strong>
+                                <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                    ${book.title}
+                                </a>
+                            </p>
 
-                                        <p><strong>Title:</strong>
-                                            <a href="MainController?action=bookDetail&bookID=${book.id}">
-                                                ${book.title}
-                                            </a>
-                                        </p>
+                            <p><strong>Author:</strong>
+                                <a href="BookController?action=search&txtsearch=${book.author}">
+                                    ${book.author}
+                                </a>
+                            </p>
 
-                                        <p><strong>Author:</strong>
-                                            <a href="BookController?action=search&txtsearch=${book.author}">
-                                                ${book.author}
-                                            </a>
-                                        </p>
+                            <p><strong>Category:</strong>
+                                <a href="BookController?action=search&txtsearch=${book.category}">
+                                    ${book.category}
+                                </a>
+                            </p>
 
-                                        <p><strong>Category:</strong>
-                                            <a href="BookController?action=search&txtsearch=${book.category}">
-                                                ${book.category}
-                                            </a>
-                                        </p>
+                            <p><strong>Available:</strong> ${book.available_copies}</p>
 
-                                        <p><strong>Available:</strong> ${book.available_copies}</p>
-
-                                        <c:choose>
-                                            <c:when test="${book.available_copies > 0}">
-                                                <form action='BookController' method='get'>
-                                                    <input type='hidden' name='action' value='borrow' />
-                                                    <input type='hidden' name='txtid' value='${book.id}' />
-                                                    <input type='hidden' name='txtsearch' value='${sessionScope.SEARCH_KEYWORD}' />
-                                                    <input type="submit" value="Request Borrow" />
-                                                </form>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <b>Don't have any new book</b><br/>
-                                                <a href="index.jsp">Back to Home</a>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <p>No new books available.</p>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-
-                    <button class="next">&#10095;</button>
-                    <div class="dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
+                            <c:choose>
+                                <c:when test="${book.available_copies > 0}">
+                                    <form action='BookController' method='get'>
+                                        <input type='hidden' name='action' value='borrow' />
+                                        <input type='hidden' name='txtid' value='${book.id}' />
+                                        <input type='hidden' name='source' value='guestHome' />
+                                        <input type='hidden' name='txtsearch' value='${sessionScope.SEARCH_KEYWORD}' />
+                                        <input type="submit" value="Request Borrow" />
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <b>Don't have any new book</b><br/>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:forEach>
                 </div>
+
+                <form class="loadMore" action="BookController">
+                    <input type="hidden" name="action" value="loadMoreNew" />
+                    <input type="hidden" name="page" value="${CURRENT_PAGE + 1}" />
+                    <button type="submit">More</button>
+                </form>
 
             </div>
 
@@ -174,5 +178,8 @@
 
 
 
+        
+
     </body>
 </html>
+

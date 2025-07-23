@@ -5,6 +5,7 @@
 package dao;
 
 import dto.SystemConfig;
+import dto.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,60 +15,63 @@ import mylib.DBUtils;
 
 /**
  *
- * @author DELL
+ * @author Admin
  */
 public class SystemConfigDAO {
-
-    public ArrayList<SystemConfig> getConfigList() {
-        ArrayList<SystemConfig> list = new ArrayList<>();
-        Connection cn = null;  // connect database and netbeans 
+    public ArrayList<SystemConfig> getConfigList(){
+        ArrayList<SystemConfig> newRule = new ArrayList<>();;
+        Connection cn = null;
         try {
             cn = DBUtils.getConnection();
-            if (cn != null) {
-                String sql = "select [id], [config_key], [config_value], [description]\n"
-                        + "from [dbo].[system_config]";
-                Statement st = cn.createStatement();
-                ResultSet table = st.executeQuery(sql);
-
-                if (table != null) {
-                    while (table.next()) {
-                        int id = table.getInt("id");
-                        String key = table.getString("config_key");
-                        double value = table.getDouble("config_value");
-                        String description = table.getString("description");
-                        SystemConfig c = new SystemConfig(id, key, value, description); // tao mot cai config moi
-                        list.add(c);
+            if(cn != null){
+                //bc 2: viet query va execute query
+                String sql = "select id,config_key,config_value,description\n"
+                        + "from dbo.system_config";
+                Statement st=cn.createStatement();
+                ResultSet table=st.executeQuery(sql);
+                if(table!=null){
+                    while(table.next()){
+                         int id=table.getInt("id");
+                         String key=table.getString("config_key");
+                         String value=table.getString("config_value");
+                         String description=table.getString("description");
+                         SystemConfig c=new SystemConfig(id, key, value, description);
+                         newRule.add(c);
                     }
                 }
-
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("ERRORRR");
         } finally {
             try {
-
+                if (cn != null) {
+                    cn.close();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-        return list;
-
+        return newRule;
     }
+    public void updateConfig(String a, String b, String c){
+        Connection cn = null;
+        try {
+            cn = DBUtils.getConnection();
+            if(cn != null){
+                String[] setkey = {a, b, c};
+                for(int i = 0; i<setkey.length;i++){
+                String sql = "UPDATE system_config SET config_value=? where id = ?;";
+                PreparedStatement st = cn.prepareStatement(sql);
+                st.setString(1, setkey[i]);
+                st.setInt(2, i+1);
+                st.executeUpdate();
+                }
 
-    public void updateConfigValue(String key, double value) {
-        try ( Connection cn = DBUtils.getConnection()) {
-            String sql = "UPDATE system_config SET config_value = ? WHERE config_key = ?";
-            PreparedStatement st = cn.prepareStatement(sql);
-            st.setDouble(1, value);
-            st.setString(2, key);
-            st.executeUpdate();
+                }
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
-
+    
     public int getNewBookYears() {
         int years = 0;
         Connection cn = null;  // connect database and netbeans 
@@ -96,5 +100,16 @@ public class SystemConfigDAO {
 
         return years;
     }
-
+    
+    public void updateConfigValue(String key, double value) {
+        try ( Connection cn = DBUtils.getConnection()) {
+            String sql = "UPDATE system_config SET config_value = ? WHERE config_key = ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setDouble(1, value);
+            st.setString(2, key);
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

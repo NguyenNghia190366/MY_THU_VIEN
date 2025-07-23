@@ -17,6 +17,7 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <a href="MainController?action=home">Back to Home</a>
         <%
         SystemConfigDAO d = new SystemConfigDAO();
         ArrayList<SystemConfig> list = d.getConfigList();

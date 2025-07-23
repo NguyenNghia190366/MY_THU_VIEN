@@ -4,6 +4,8 @@
  */
 package dto;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Admin
@@ -11,15 +13,24 @@ package dto;
 public class Fine {
      private int id;
     private BorrowRecord borrowRecord;
-    private float find_amount;
+    private BigDecimal find_amount;
     private String paid_status;
 
-    public Fine(int id, BorrowRecord borrowRecord, float find_amount) {
+    public Fine(int id, BorrowRecord borrowRecord, BigDecimal find_amount) {
         this.id = id;
         this.borrowRecord = borrowRecord;
         this.find_amount = find_amount;
         this.paid_status = "unpaid";
     }
+
+    public Fine(int id, BorrowRecord borrowRecord, BigDecimal find_amount, String paid_status) {
+        this.id = id;
+        this.borrowRecord = borrowRecord;
+        this.find_amount = find_amount;
+        this.paid_status = paid_status;
+    }
+    
+    
 
     public int getId() {
         return id;
@@ -29,7 +40,7 @@ public class Fine {
         return borrowRecord;
     }
 
-    public float getFind_amount() {
+    public BigDecimal getFind_amount() {
         return find_amount;
     }
 
@@ -45,7 +56,7 @@ public class Fine {
         this.borrowRecord = borrowRecord;
     }
 
-    public void setFind_amount(float find_amount) {
+    public void setFind_amount(BigDecimal find_amount) {
         this.find_amount = find_amount;
     }
 

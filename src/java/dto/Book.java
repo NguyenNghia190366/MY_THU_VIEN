@@ -9,6 +9,7 @@ package dto;
  * @author Admin
  */
 public class Book {
+
     private int id;
     private String title;
     private String author;
@@ -19,6 +20,10 @@ public class Book {
     private int available_copies;
     private String status;
     private String url;
+    private int borrowCount;
+
+    public Book() {
+    }
 
     public Book(int id, String title, String author, String isbn, String category, int published_year, int total_copies, int available_copies, String status, String url) {
         this.id = id;
@@ -32,10 +37,8 @@ public class Book {
         this.status = status;
         this.url = url;
     }
-    
-    
 
-    public Book(int id, String title, String author, String isbn, String category, int published_year, int total_copies, String status,String url) {
+    public Book(int id, String title, String author, String isbn, String category, int published_year, int total_copies, String status, String url) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -140,6 +143,13 @@ public class Book {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
+    public int getBorrowCount() {
+        return borrowCount;
+    }
+
+    public void setBorrowCount(int borrowCount) {
+        this.borrowCount = borrowCount;
+    }
+
 }

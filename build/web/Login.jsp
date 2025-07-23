@@ -5,12 +5,13 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 
 <%
-    String redirectBackTo = request.getParameter("redirectBackTo");
+    String redirectBackTo = request.getParameter("REDIRECT_BACK_TO");
     if (redirectBackTo != null && !redirectBackTo.isEmpty()) {
-        session.setAttribute("redirectBackTo", redirectBackTo);
+        session.setAttribute("REDIRECT_BACK_TO", redirectBackTo);
     }
 %>
 
@@ -68,10 +69,13 @@
         <div class = "form" >
             <h1>Let sign in</h1>
             <form action="MainController" method = "post">
+                <input type="hidden" name="REDIRECT_BACK_TO" value="${param.REDIRECT_BACK_TO}" />
                 <div class="insideform"><div class="title">Email: </div><input class="input1" type="email" name="txtemail" required=""></div>
                 <div class="insideform"><div class="title">Password: </div><input class="input2" type="password" name="txtpassword" required=""></div>
                 <input class="submit" type="submit" name="action" value='login'>
             </form>
+            
+            <span style="color: red">${ERROR_MESSAGE}</span>
         </div>
     </body>
 </html>

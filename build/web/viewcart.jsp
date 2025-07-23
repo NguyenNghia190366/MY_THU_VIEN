@@ -10,19 +10,12 @@
     </head>
     <body>
         <p>ROLE = ${sessionScope.ROLE}</p>
-        
+
         <h1>Your Cart</h1>
         <div>
-            
-            <c:choose>
-                <c:when test="${sessionScope.ROLE eq 'user'}">
-                    <a href="UserDashboard.jsp">Back to Home</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="MainController?action=home">Back to Home</a>
-                </c:otherwise>
-            </c:choose>
-            
+
+            <a href="MainController?action=home">Home</a>
+
             <a href="BookController?action=search&txtsearch=${sessionScope.SEARCH_KEYWORD}">Continue Shopping</a>
         </div>
 
@@ -50,9 +43,14 @@
                         </c:forEach>
                     </tbody>
                 </table>
-                <<form action="SendBorrowRequestController">
+                <form action="BookRequestController" method="post">
+                    <input type="hidden" name="action" value="borrow"/>
+                    <c:forEach var="book" items="${sessionScope.CART}">
+                        <input type="hidden" name="bookIds" value="${book.id}"/>
+                    </c:forEach>
                     <input type="submit" value="Submit borrow request"/>
                 </form>
+
             </c:when>
             <c:otherwise>
                 <p>Your cart is empty.</p>

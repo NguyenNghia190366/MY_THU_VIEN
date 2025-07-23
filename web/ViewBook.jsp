@@ -11,15 +11,15 @@
 
         <p>ROLE = ${sessionScope.ROLE}</p>
 
+
+        <!-- Hiện thông báo nếu có -->
+        <c:if test="${not empty sessionScope.ERROR_MESSAGE}">
+            <p style="color:red;">${sessionScope.ERROR_MESSAGE}</p>
+            <c:remove var="ERROR_MESSAGE" scope="session"/>
+        </c:if>
+
         <div class="nav-bar">
-            <c:choose>
-                <c:when test="${sessionScope.ROLE eq 'user'}">
-                    <a href='UserDashboard.jsp'>Home</a>
-                </c:when>
-                <c:otherwise>
-                    <a href='MainController?action=home'>Home</a>
-                </c:otherwise>
-            </c:choose>
+            <a href="MainController?action=home">Home</a>
 
             <a href="viewcart.jsp">View Cart</a>
         </div>
@@ -38,6 +38,7 @@
             <input type="text" name="txtsearch" placeholder="Enter title, author or category..." value="${sessionScope.SEARCH_KEYWORD}" />
 
             <input type="submit" value="Search" />
+            <span style="color: red">${MSG}</span>
         </form>
 
         <c:choose>
@@ -85,7 +86,7 @@
                                             <button disabled>Already in Cart</button>
                                         </c:when>
                                         <c:otherwise>
-                                            <button onclick="borrowBook(this, ${book.id}); return false;">Request Borrow</button>
+                                            <button onclick="borrowBook(this, ${book.id})">Request Borrow</button>
                                         </c:otherwise>
                                     </c:choose>
 
@@ -105,37 +106,50 @@
         </c:choose>
 
         <script>
-            const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
+            // Biến này lấy từ session, giá trị set trong JSP:
+            window.isLoggedIn = ${sessionScope.USER != null ? 'true' : 'false'};
 
             function borrowBook(btn, bookId) {
-                const currentUrl = "BookController?action=search&txtsearch=${sessionScope.SEARCH_KEYWORD}";
+                // Lấy URL hiện tại để return về đúng ViewBook.jsp + query
+                const returnUrl = window.location.pathname + window.location.search;
 
-                if (!isLoggedIn) {
-                    // Nếu chưa login → đi Login.jsp + mang URL quay về
-                    window.location.href = "Login.jsp?redirectBackTo=" + encodeURIComponent(currentUrl);
+                if (!window.isLoggedIn) {
+                    // Chưa login: build REDIRECT_BACK_TO = link borrow
+                    const borrowUrl = "BookController?action=borrow"
+                            + "&txtid=" + bookId
+                            + "&returnUrl=" + encodeURIComponent(returnUrl);
+
+                    window.location.href = "Login.jsp?REDIRECT_BACK_TO=" + encodeURIComponent(borrowUrl);
                     return;
                 }
 
+                // Đã login: gửi POST borrow luôn
                 const params = new URLSearchParams();
-                params.append('action', 'borrow');
-                params.append('txtid', bookId);
-                params.append('returnUrl', currentUrl);
+                params.append("action", "borrow");
+                params.append("txtid", bookId);
+                params.append("returnUrl", returnUrl);
 
-                fetch('BookController?' + params.toString())
-                    .then(res => {
-                        if (res.ok) {
-                            btn.disabled = true;
-                            btn.innerText = 'Already in Cart';
-                        } else {
-                            alert("Failed to borrow book!");
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Error!");
-                    });
+                fetch("BookController", {
+                    method: "POST",
+                    body: params
+                })
+                        .then(res => {
+                            if (res.ok) {
+                                btn.disabled = true;
+                                btn.innerText = "Already in Cart";
+                                // Reload để giữ state search mới an toàn
+                                window.location.href = returnUrl;
+                            } else {
+                                alert("Borrow failed!");
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert("Error borrowing book!");
+                        });
             }
         </script>
 
     </body>
+
 </html>

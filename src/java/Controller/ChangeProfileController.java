@@ -9,6 +9,7 @@ import dto.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,8 +17,9 @@ import jakarta.servlet.http.HttpSession;
 
 /**
  *
- * @author DELL
+ * @author onggi
  */
+@WebServlet(name = "ChangeProfileController", urlPatterns = {"/ChangeProfileController"})
 public class ChangeProfileController extends HttpServlet {
 
     /**
@@ -31,25 +33,18 @@ public class ChangeProfileController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        try {
-            String name = request.getParameter("txtname");
-            String password = request.getParameter("txtpassword");
-
-            HttpSession session = request.getSession();
-            User us = (User) session.getAttribute("user"); //nho co session la phai ep kieu
-            int id = us.getId();
-            UserDAO d = new UserDAO();
-            int result = d.UpdateUser(id, name, password);
-
-            if (result == 1) {
-                response.sendRedirect("LogoutController");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("msg", "Error while updating config.");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
-
+        response.setContentType("text/html;charset=UTF-8");
+        try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ChangeProfileController</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ChangeProfileController at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
@@ -65,7 +60,15 @@ public class ChangeProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("USER");
+
+        if (user == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
+
+        request.getRequestDispatcher("changeProfile.jsp").forward(request, response);
     }
 
     /**
@@ -79,7 +82,33 @@ public class ChangeProfileController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request,response);
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("USER");
+
+        if (user == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
+
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+
+        boolean updated = new UserDAO().updateUser(user);
+
+        if (updated) {
+            session.setAttribute("USER", user); // update session
+            request.setAttribute("message", "Profile updated successfully.");
+        } else {
+            request.setAttribute("error", "Failed to update profile.");
+        }
+
+        request.getRequestDispatcher("changeProfile.jsp").forward(request, response);
+
     }
 
     /**

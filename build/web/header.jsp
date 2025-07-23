@@ -23,7 +23,7 @@
                     </ul>
 
                     <a href="SignUp.html"> <button type="button">Sign up</button></a>
-                    <a href="Login.jsp"> <button type="button">Login</button></a>
+                    <a href="MainController?action=login"> <button type="button">Login</button></a>
 
                 </nav>
 

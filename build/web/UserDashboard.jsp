@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -11,15 +12,15 @@
     </head>
     <body>
 
-        <% if (request.getAttribute("LIST_AVAILABLE") == null) {
-            response.sendRedirect("MainController?action=home");
-        } %>
+        <c:if test="${empty sessionScope.USER}">
+            <c:redirect url="Login.jsp"/>
+        </c:if>
 
 
         <!-- Hiện thông báo nếu có -->
-        <c:if test="${not empty sessionScope.msg}">
-            <p style="color:red;">${sessionScope.msg}</p>
-            <c:remove var="msg" scope="session"/>
+        <c:if test="${not empty sessionScope.ERROR_MESSAGE}">
+            <p style="color:red;">${sessionScope.ERROR_MESSAGE}</p>
+            <c:remove var="ERROR_MESSAGE" scope="session"/>
         </c:if>
 
 
@@ -33,7 +34,7 @@
                     <ul>
                         <li><a href="MainController?action=home">Home</a></li>
                         <li><a href="#">Library Info</a></li>
-                        <li><a href="#">View History</a></li>
+                        <li><a href="MainController?action=viewHistory">View History</a></li>
                         <li><a href="viewcart.jsp">view cart</a></li>
                     </ul>
 
@@ -47,7 +48,7 @@
 
         <section id="sec1">
             <div class="sec1-left">
-                <h1>Welcome back, ${sessionScope.user.name}</h1>
+                <h1>Welcome back, ${sessionScope.USER.name}</h1>
                 <p>We're glad to see you again! Explore our library and find your next great read.</p>
 
                 <form class="search-form" action="BookController" method="get">
@@ -74,84 +75,73 @@
                     Discover the books that our community loves the most.
                 </p>
 
-                <div class="carousel-container"> 
-                    <button class="prev">&#10094;</button>
+                <div class="grid-container">
+                    <c:choose>
+                        <c:when test="${not empty LIST_AVAILABLE}">
+                            <c:forEach var="book" items="${LIST_AVAILABLE}">
+                                <div class="book-card">
+                                    <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                        <img src="${book.url}" alt="Book Cover" style="cursor:pointer;" />
+                                    </a>
 
-                    <div class="carousel-container"> 
+                                    <p><strong>Title:</strong>
+                                        <a href="MainController?action=bookDetail&bookID=${book.id}">
+                                            ${book.title}
+                                        </a>
+                                    </p>
 
-                        <div class="carousel-track">
-                            <c:choose>
-                                <c:when test="${not empty LIST_AVAILABLE}">
-                                    <c:forEach var="book" items="${LIST_AVAILABLE}">
-                                        <div class="book-card">
-                                            <a href="MainController?action=bookDetail&bookID=${book.id}">
-                                                <img src="${book.url}" alt="Book Cover" style="cursor:pointer;" />
-                                            </a>
+                                    <p><strong>Author:</strong>
+                                        <a href="BookController?action=search&txtsearch=${book.author}">
+                                            ${book.author}
+                                        </a>
+                                    </p>
 
-                                            <p><strong>Title:</strong>
-                                                <a href="MainController?action=bookDetail&bookID=${book.id}">
-                                                    ${book.title}
-                                                </a>
-                                            </p>
+                                    <p><strong>Category:</strong>
+                                        <a href="BookController?action=search&txtsearch=${book.category}">
+                                            ${book.category}
+                                        </a>
+                                    </p>
 
-                                            <p><strong>Author:</strong>
-                                                <a href="BookController?action=search&txtsearch=${book.author}">
-                                                    ${book.author}
-                                                </a>
-                                            </p>
+                                    <p><strong>Available:</strong> ${book.available_copies}</p>
 
-                                            <p><strong>Category:</strong>
-                                                <a href="BookController?action=search&txtsearch=${book.category}">
-                                                    ${book.category}
-                                                </a>
-                                            </p>
-
-                                            <p><strong>Available:</strong> ${book.available_copies}</p>
+                                    <c:choose>
+                                        <c:when test="${book.available_copies > 0}">
+                                            <c:set var="found" value="false"/>
+                                            <c:if test="${not empty sessionScope.CART}">
+                                                <c:forEach var="b" items="${sessionScope.CART}">
+                                                    <c:if test="${b.id == book.id}">
+                                                        <c:set var="found" value="true"/>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:if>
 
                                             <c:choose>
-                                                <c:when test="${book.available_copies > 0}">
-                                                    <c:set var="found" value="false"/>
-                                                    <c:if test="${not empty sessionScope.CART}">
-                                                        <c:forEach var="b" items="${sessionScope.CART}">
-                                                            <c:if test="${b.id == book.id}">
-                                                                <c:set var="found" value="true"/>
-                                                            </c:if>
-                                                        </c:forEach>
-                                                    </c:if>
-
-                                                    <c:choose>
-                                                        <c:when test="${found}">
-                                                            <button disabled>Already in Cart</button>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <button onclick="borrowBook(this, ${book.id}); return false;">Request Borrow</button>
-                                                        </c:otherwise>
-                                                    </c:choose>
-
+                                                <c:when test="${found}">
+                                                    <button disabled>Already in Cart</button>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="out-of-stock">Out of stock</span>
+                                                    <button onclick="borrowBook(this, ${book.id})">Request Borrow</button>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </div>
 
-                                    </c:forEach>
-                                </c:when>
-                                <c:otherwise>
-                                    <p>No books available.</p>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-
-                        <button class="next">&#10095;</button>
-                        <div class="dots">
-                            <span class="dot active"></span>
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                        </div>
-                    </div>
-
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="out-of-stock">Out of stock</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <p>No books available.</p>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
+                <form class="loadMore" action="BookController">
+                    <input type="hidden" name="action" value="loadMoreAvailable" />
+                    <input type="hidden" name="page" value="${CURRENT_PAGE + 1}" />
+                    <button type="submit">More</button>
+                </form>
 
         </section>
 
@@ -182,35 +172,42 @@
 
         <%@ include file="footer.jsp" %>
 
+
         <script>
-            const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
+            // Biến này lấy từ session để JS biết user đã login chưa
+            window.isLoggedIn = ${sessionScope.USER != null ? 'true' : 'false'};
 
             function borrowBook(btn, bookId) {
-                const currentUrl = "BookController?action=search&txtsearch=${sessionScope.SEARCH_KEYWORD}";
+                // Lấy URL hiện tại để quay lại đúng trang search
+                const returnUrl = window.location.pathname + window.location.search;
 
-                if (!isLoggedIn) {
-                    // Nếu chưa login → đi Login.jsp + mang URL quay về
-                    window.location.href = "Login.jsp?redirectBackTo=" + encodeURIComponent(currentUrl);
+                if (!window.isLoggedIn) {
+                    // Chưa login thì redirect sang Login.jsp kèm REDIRECT_BACK_TO
+                    window.location.href = "Login.jsp?REDIRECT_BACK_TO=" + encodeURIComponent(returnUrl);
                     return;
                 }
 
+                // Nếu đã login, gửi borrow request qua fetch
                 const params = new URLSearchParams();
-                params.append('action', 'borrow');
-                params.append('txtid', bookId);
-                params.append('returnUrl', currentUrl);
+                params.append("action", "borrow");
+                params.append("txtid", bookId);
+                params.append("returnUrl", returnUrl);
 
-                fetch('BookController?' + params.toString())
+                fetch("BookController", {
+                    method: "POST",
+                    body: params
+                })
                         .then(res => {
                             if (res.ok) {
                                 btn.disabled = true;
-                                btn.innerText = 'Already in Cart';
+                                btn.innerText = "Already in Cart";
                             } else {
-                                alert("Failed to borrow book!");
+                                alert("Borrow failed!");
                             }
                         })
                         .catch(err => {
                             console.error(err);
-                            alert("Error!");
+                            alert("Error borrowing book!");
                         });
             }
         </script>

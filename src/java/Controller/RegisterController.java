@@ -5,6 +5,8 @@
 
 package Controller;
 
+import dao.UserDAO;
+import dto.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,14 +14,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
- * @author Admin
+ * @author onggi
  */
-@WebServlet(name="AdminDashboard", urlPatterns={"/AdminDashboard"})
-public class AdminDashboard extends HttpServlet {
+@WebServlet(name="RegisterController", urlPatterns={"/RegisterController"})
+public class RegisterController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,13 +37,12 @@ public class AdminDashboard extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AdminDashboard</title>");  
+            out.println("<title>Servlet RegisterController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AdminDashboard at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet RegisterController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            
         }
     } 
 
@@ -70,7 +70,22 @@ public class AdminDashboard extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        UserDAO dao = new UserDAO();
+        User existing = dao.getUserByEmail(email);
+
+        if (existing != null) {
+            request.setAttribute("error", "Email already registered.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+        } else {
+            User newUser = new User(name, email, password);
+            dao.register(newUser);
+            response.sendRedirect("Login.jsp"); 
+        }
+    
     }
 
     /** 

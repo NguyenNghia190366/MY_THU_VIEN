@@ -1,7 +1,6 @@
 package Controller;
 
 import dao.SystemConfigDAO;
-import dto.SystemConfig;
 import dto.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,42 +15,47 @@ public class ConfigController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            HttpSession session = request.getSession();
+            User us = (User) session.getAttribute("USER");
 
-        HttpSession session = request.getSession();
-        User us = (User) session.getAttribute("user");
+            // ✅ Kiểm tra quyền truy cập
+            if (us == null || !"admin".equalsIgnoreCase(us.getRole())) {
+                session.setAttribute("REDIRECT_BACK_TO", "ConfigController?action=show");
+                response.sendRedirect("Login.jsp");
+                return;
+            }
 
-        // ✅ Kiểm tra quyền truy cập
-        if (us == null || !"admin".equalsIgnoreCase(us.getRole())) {
-            session.setAttribute("redirectBackTo", "ConfigController?action=show");
-            response.sendRedirect("Login.jsp");
-            return;
+            String action = request.getParameter("action");
+            if (action == null) {
+                action = "show";
+            }
+
+            switch (action) {
+                case "show":
+                    showConfigPage(request, response);
+                    break;
+
+                default:
+                    if (action.startsWith("update_stock")) {
+                        handleUpdate(request, response);
+                    } else {
+                        response.sendRedirect("ConfigController?action=show");
+                    }
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "show";
-        }
-
-        switch (action) {
-            case "show":
-                showConfigPage(request, response);
-                break;
-
-            default:
-                if (action.startsWith("update_stock")) {
-                    handleUpdate(request, response);
-                } else {
-                    response.sendRedirect("ConfigController?action=show");
-                }
-                break;
-        }
     }
 
     private void showConfigPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         SystemConfigDAO dao = new SystemConfigDAO();
         request.setAttribute("CONFIG_LIST", dao.getConfigList());
-        request.getRequestDispatcher("AdminDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("setupSystemConfig.jsp").forward(request, response);
     }
 
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response)
@@ -64,13 +68,13 @@ public class ConfigController extends HttpServlet {
         try {
             double newValue = Double.parseDouble(newValueRaw);
             dao.updateConfigValue(key, newValue);
-            request.setAttribute("msg", "Update successfully for: " + key);
+            request.setAttribute("MSG", "Update successfully for: " + key);
         } catch (NumberFormatException e) {
-            request.setAttribute("msg", "Invalid value for: " + key);
+            request.setAttribute("MSG", "Invalid value for: " + key);
         }
 
         request.setAttribute("CONFIG_LIST", dao.getConfigList());
-        request.getRequestDispatcher("AdminDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("setupSystemConfig.jsp").forward(request, response);
     }
 
     @Override
